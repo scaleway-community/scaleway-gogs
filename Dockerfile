@@ -1,5 +1,5 @@
-## -*- docker-image-name: "armbuild/scw-app-gogs:latest" -*-
-FROM armbuild/scw-app-golang:1.4.2
+## -*- docker-image-name: "scaleway/gogs:latest" -*-
+FROM scaleway/golang:1.4.2
 MAINTAINER Scaleway <opensource@scaleway.com> (@scaleway)
 
 
