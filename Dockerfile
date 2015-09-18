@@ -37,11 +37,12 @@ ADD ./patches/usr/local/ /usr/local/
 ADD ./patches/go/ /go/
 
 # Configure NginX
-RUN ln -sf /etc/nginx/sites-available/gogs /etc/nginx/sites-enabled/gogs && \
-    rm -f /etc/nginx/sites-enabled/default
+RUN ln -sf /etc/nginx/sites-available/gogs /etc/nginx/sites-enabled/gogs \
+    && rm -f /etc/nginx/sites-enabled/default
 
 # Disable TLS (postfix)
-RUN sed -i "s/smtpd_use_tls=yes/smtpd_use_tls=no/" /etc/postfix/main.cf
+RUN sed -i "s/smtpd_use_tls=yes/smtpd_use_tls=no/" /etc/postfix/main.cf \
+  && sed -i "s/inet_interfaces = .*/inet_interfaces = localhost/" /etc/postfix/main.cf
 
 # Clean rootfs from image-builder
 RUN /usr/local/sbin/builder-leave

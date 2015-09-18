@@ -14,8 +14,6 @@ sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /root/README
 # Configure postfix
 sed -i "s/mydestination = .*/mydestination = $(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com, localhost.localdomain, localhost/g" /etc/postfix/main.cf
 sed -i "s/myhostname = .*/myhostname = $(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/g" /etc/postfix/main.cf
-sed -i "s/smtpd_use_tls=yes/smtpd_use_tls=no/" /etc/postfix/main.cf
-sed -i "s/inet_interfaces = .*/inet_interfaces = localhost/" /etc/postfix/main.cf
 
 postfix -c /etc/postfix/ set-permissions
 chown -R root:postdrop /usr/sbin/postqueue
