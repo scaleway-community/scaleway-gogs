@@ -1,0 +1,9 @@
+Hi Cloud Rider,
+Welcome to the Gogs image!
+
+Initialize Gogs at http://${PUBLIC_IP}.
+
+MySQL is configured for user root with password {mysql_root_password}.
+Gogs database name is gogs.
+
+Enjoy!

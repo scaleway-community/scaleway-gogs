@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# We need this extra script run ONCE on startup to initialize the
+# database with per-image passwords.
+
+export DEBIAN_FRONTEND=noninteractive
+
+MYSQL_ROOT_PASSWORD=$(head /dev/urandom -c 512 | sha1sum | awk '// { print $1; }')
+
+# MOTD & README
+sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /etc/update-motd.d/70-gogs
+sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /root/README
+
+# Configure postfix
+sed -i "s/mydestination = .*/mydestination = $(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com, localhost.localdomain, localhost/g" /etc/postfix/main.cf
+sed -i "s/myhostname = .*/myhostname = $(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/g" /etc/postfix/main.cf
+sed -i "s/smtpd_use_tls=yes/smtpd_use_tls=no/" /etc/postfix/main.cf
+sed -i "s/inet_interfaces = .*/inet_interfaces = localhost/" /etc/postfix/main.cf
+
+postfix -c /etc/postfix/ set-permissions
+chown -R root:postdrop /usr/sbin/postqueue
+chown -R root:postdrop /usr/sbin/postdrop
+chmod g+s /usr/sbin/postqueue /usr/sbin/postdrop
+/etc/init.d/postfix restart
+
+# Configure Gogs
+sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
+sed -i "s/{server_name}/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
+sed -i "s/{root_url}/http:\/\/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
+sed -i "s/{default_mail}/gogs@$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
+chown -R git /go/src/github.com/gogits/gogs
+
+# Let's install MySQL
+chmod 1777 /tmp
+/etc/init.d/mysql start
+mysqladmin -u root password $MYSQL_ROOT_PASSWORD
+
+# this service is only needed on the first boot so we remove it here.
+rm -f /etc/init/init-gogs.conf
+rm -f /usr/local/sbin/oc-init-gogs
