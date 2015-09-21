@@ -6,7 +6,7 @@ DESCRIPTION =		GOGS
 SOURCE_URL =		https://github.com/scaleway/image-app-gogs
 VENDOR_URL =		http://gogs.io
 
-IMAGE_VOLUME_SIZE =     50G
+IMAGE_VOLUME_SIZE =     150G
 IMAGE_BOOTSCRIPT =      stable
 IMAGE_NAME =            GOGS
 
