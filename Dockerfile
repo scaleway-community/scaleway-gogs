@@ -1,5 +1,5 @@
 ## -*- docker-image-name: "scaleway/gogs:latest" -*-
-FROM scaleway/golang:1.4.2
+FROM scaleway/golang:1.5.1
 MAINTAINER Scaleway <opensource@scaleway.com> (@scaleway)
 
 
