@@ -20,7 +20,7 @@ RUN apt-get -qq update \
 
 # Install GOGS
 RUN adduser --disabled-login --gecos 'Gogs' git \
- && go get -u github.com/gogits/gogs
+ && go get -u github.com/gogits/gogs \
  && cd $GOPATH/src/github.com/gogits/gogs && go build
 
 
