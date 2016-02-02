@@ -1,5 +1,5 @@
 ## -*- docker-image-name: "scaleway/gogs:latest" -*-
-FROM scaleway/golang:1.5.2
+FROM scaleway/golang:1.5.3
 MAINTAINER Scaleway <opensource@scaleway.com> (@scaleway)
 
 
@@ -19,7 +19,7 @@ RUN apt-get -qq update \
 
 
 # Install GOGS
-ENV GOGS_VERSION=0.8.10
+ENV GOGS_VERSION=0.8.25
 RUN adduser --disabled-login --gecos 'Gogs' git \
  && go get -tags="v$GOGS_VERSION" github.com/gogits/gogs \
  && cd $GOPATH/src/github.com/gogits/gogs && go build
