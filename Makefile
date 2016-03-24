@@ -8,7 +8,7 @@ VENDOR_URL =		http://gogs.io
 DEFAULT_IMAGE_ARCH =	x86_64
 
 
-IMAGE_VOLUME_SIZE =     150G
+IMAGE_VOLUME_SIZE =     50G
 IMAGE_BOOTSCRIPT =      stable
 IMAGE_NAME =            GOGS 0.8.25
 
