@@ -27,7 +27,7 @@ RUN apt-get -qq update     \
 
 
 # Install GOGS
-ENV GOGS_VERSION=0.8.25
+ENV GOGS_VERSION=0.9.13
 RUN adduser --disabled-login --gecos 'Gogs' git           \
  && go get -tags="v$GOGS_VERSION" github.com/gogits/gogs  \
  && cd $GOPATH/src/github.com/gogits/gogs && go build
