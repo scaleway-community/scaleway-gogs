@@ -1,0 +1,10 @@
+[Unit]
+Description=Do stuff before mysql on first boot
+Before=mysql.service
+
+[Service]
+ExecStart=/usr/local/sbin/scw-init-mysql
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

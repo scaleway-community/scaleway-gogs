@@ -6,10 +6,15 @@
 export DEBIAN_FRONTEND=noninteractive
 
 MYSQL_ROOT_PASSWORD=$(head /dev/urandom -c 512 | sha1sum | awk '// { print $1; }')
+PUBLIC_IP=$(oc-metadata --cached PUBLIC_IP_ADDRESS)
+GOGS_PATH="/usr/lib/gogs/"
+
+mysql -u root -e "CREATE DATABASE gogs CHARACTER SET utf8 COLLATE utf8_general_ci;"
 
 # MOTD & README
 sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /etc/update-motd.d/70-gogs
 sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /root/README
+sed -i "s/your-server-ip/$PUBLIC_IP/" /root/README
 
 # Configure postfix
 sed -i "s/mydestination = .*/mydestination = $(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com, localhost.localdomain, localhost/g" /etc/postfix/main.cf
@@ -22,11 +27,12 @@ chmod g+s /usr/sbin/postqueue /usr/sbin/postdrop
 /etc/init.d/postfix restart
 
 # Configure Gogs
-sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
-sed -i "s/{server_name}/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
-sed -i "s/{root_url}/http:\/\/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
-sed -i "s/{default_mail}/gogs@$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" /go/src/github.com/gogits/gogs/custom/conf/app.ini
-chown -R git /go/src/github.com/gogits/gogs
+sed -i "s/{mysql_root_password}/$MYSQL_ROOT_PASSWORD/" "$GOGS_PATH"/custom/conf/app.ini
+sed -i "s/{server_name}/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" "$GOGS_PATH"/custom/conf/app.ini
+sed -i "s/{root_url}/http:\/\/$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" "$GOGS_PATH"/custom/conf/app.ini
+sed -i "s/{default_mail}/gogs@$(/usr/local/bin/oc-metadata --cached ID).pub.cloud.scaleway.com/" "$GOGS_PATH"/custom/conf/app.ini
+chown -R git:git "$GOGS_PATH"
+chown -R git:git /home/git/
 
 # Let's install MySQL
 chmod 1777 /tmp
@@ -36,3 +42,7 @@ mysqladmin -u root password $MYSQL_ROOT_PASSWORD
 # this service is only needed on the first boot so we remove it here.
 rm -f /etc/init/init-gogs.conf
 rm -f /usr/local/sbin/oc-init-gogs
+
+systemctl disable init-gogs
+
+su -c "cd $GOGS_PATH && ./gogs web &" git
