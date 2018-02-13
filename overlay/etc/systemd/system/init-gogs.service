@@ -1,0 +1,10 @@
+[Unit]
+Description=initialize Gogs on first boot
+After=mysql.service
+
+[Service]
+ExecStart=/usr/local/sbin/scw-init-gogs
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
