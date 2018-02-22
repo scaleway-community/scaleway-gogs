@@ -45,4 +45,7 @@ rm -f /usr/local/sbin/oc-init-gogs
 
 systemctl disable init-gogs
 
-su -c "cd $GOGS_PATH && ./gogs web &" git
+systemctl enable gogs
+systemctl start gogs
+
+#su -c "cd $GOGS_PATH && ./gogs web" git
