@@ -1,11 +1,6 @@
 ## -*- docker-image-name: "scaleway/gogs:latest" -*-
-FROM scaleway/golang:amd64-latest
-# following 'FROM' lines are used dynamically thanks do the image-builder
-# which dynamically update the Dockerfile if needed.
-#FROM scaleway/golang:armhf-1.6        # arch=armv7l
-#FROM scaleway/ubuntu:arm64-1.6y       # arch=arm64
-#FROM scaleway/ubuntu:i386-1.6         # arch=i386
-#FROM scaleway/ubuntu:mips-1.6         # arch=mips
+ARG SCW_ARCH
+FROM scaleway/golang:${SCW_ARCH}-latest
 
 MAINTAINER Scaleway <opensource@scaleway.com> (@scaleway)
 
