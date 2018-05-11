@@ -4,7 +4,8 @@ FROM scaleway/golang:${SCW_ARCH}-latest
 
 MAINTAINER Scaleway <opensource@scaleway.com> (@scaleway)
 
-ARG GOGS_RELEASE_URL
+ARG GOGS_RELEASE_URL_X86
+ARG GOGS_RELEASE_URL_ARM
 
 
 # Prepare rootfs for image-builder
@@ -19,15 +20,26 @@ RUN apt-get -qq update     \
 	mysql-server-5.7   \
 	nginx              \
 	supervisor         \
+  unzip              \
  && apt-get clean
 
 
+# Downloads GOGS 
+RUN case "${ARCH}" in                                     \
+  armv7l|armhf|arm)                                       \
+    curl --silent -L -o gogs.zip ${GOGS_RELEASE_URL_ARM}  \
+    ;;                                                    \
+  amd64|x86_64)                                           \
+    curl --silent -L -o gogs.zip ${GOGS_RELEASE_URL_X86}  \
+    ;;                                                    \
+  *) echo "Unhandled architecture: ${ARCH}"; exit 1 ;;             \
+  esac
+
 # Install GOGS
 RUN adduser --disabled-login --gecos 'Gogs' git           \
- && curl --silent -L -O ${GOGS_RELEASE_URL}               \
- && tar xzf linux_amd64.tar.gz -C /usr/lib/               \
+ && unzip gogs.zip -d /usr/lib/               \
  && echo "PATH=$PATH:/usr/lib/gogs/" > /etc/profile.d/golang.sh      \
- && rm /linux_amd64.tar.gz
+ && rm /gogs.zip
 
 
 # Configure NginX

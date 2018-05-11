@@ -7,5 +7,7 @@ IMAGE_SOURCE_URL = https://github.com/scaleway/image-app-gogs
 IMAGE_VENDOR_URL = http://gogs.io
 IMAGE_BOOTSCRIPT = mainline 4.9
 
-GOGS_RELEASE_URL=$(shell curl -s https://api.github.com/repos/gogits/gogs/releases | jq '.[0].assets[] | select( .name == "linux_amd64.tar.gz") | .["browser_download_url"]')
-BUILD_ARGS = GOGS_RELEASE_URL=$(GOGS_RELEASE_URL)
+GOGS_RELEASE_URL_X86=$(shell curl -s https://api.github.com/repos/gogits/gogs/releases | jq '.[0].assets[] | select( .name == "linux_amd64.zip") | .["browser_download_url"]')
+GOGS_RELEASE_URL_ARM=$(shell curl -s https://api.github.com/repos/gogits/gogs/releases | jq '.[0].assets[] | select( .name == "linux_armv5.zip") | .["browser_download_url"]')
+BUILD_ARGS = GOGS_RELEASE_URL_ARM=$(GOGS_RELEASE_URL_ARM) \
+						 GOGS_RELEASE_URL_X86=$(GOGS_RELEASE_URL_X86)
