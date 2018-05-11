@@ -13,7 +13,8 @@ RUN /usr/local/sbin/scw-builder-enter
 
 
 # Install packages
-RUN apt-get install -y -q  \
+RUN apt-get update &&  \
+    apt-get install -y -q  \
 	mailutils          \
 	mysql-server-5.7   \
 	nginx              \
